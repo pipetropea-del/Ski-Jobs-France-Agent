@@ -28,9 +28,17 @@ ZONAS = {
         {"nombre": "Hunter Chalets", "url": "https://hunterchalets.com/ski-season-jobs/"},
         {"nombre": "SnowSeason", "url": "https://www.snowseasoncentral.com/france"},
     ],
-    "Otras zonas": [
+        "Otras zonas": [
         {"nombre": "SkiWorld", "url": "https://www.skiworld.co.uk/recruitment/ski-season-jobs"},
         {"nombre": "Natives", "url": "https://natives.co.uk"},
+    ],
+    "Ski Rental Francia": [
+        {"nombre": "Intersport Jobs", "url": "https://www.intersport.fr/recrutement/"},
+        {"nombre": "Skiset Jobs", "url": "https://www.skiset.com/fr/recrutement"},
+        {"nombre": "Sport 2000 Jobs", "url": "https://www.sport2000.fr/recrutement"},
+        {"nombre": "Twinner Jobs", "url": "https://www.twinner.com/fr/recrutement"},
+        {"nombre": "Ski France Emploi", "url": "https://fr.indeed.com/emplois?q=ski+rental+france+loge+nourri"},
+    ]
     ]
 }
 

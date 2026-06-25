@@ -64,42 +64,51 @@ KEYWORDS_GRUPO = ["team", "couple", "group", "several", "multiple", "positions",
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
-
 def obtener_detalles(url):
     try:
-        r = requests.get(url, headers=HEADERS, timeout=8, verify=False)
+        r = requests.get(url, headers=HEADERS, timeout=4, verify=False)
         soup = BeautifulSoup(r.text, "html.parser")
-        for tag in soup(["script", "style", "nav", "header", "footer"]):
+        for tag in soup(["script", "style", "nav", "header", "footer", "a"]):
             tag.decompose()
         detalles = {"descripcion": "", "salario": "", "requisitos": "", "beneficios": ""}
+
+        def es_valido(t):
+            if len(t) < 30 or len(t) > 350:
+                return False
+            if "@" in t or "Contact" in t or "Home" in t or "Apply" in t:
+                return False
+            if t.count(">") > 1 or t.count("|") > 2:
+                return False
+            palabras = t.split()
+            if len(palabras) < 5:
+                return False
+            return True
+
         parrafos = []
-        for p in soup.find_all(["p", "li", "div"], limit=80):
+        for p in soup.find_all(["p", "li"], limit=80):
             t = p.get_text(strip=True)
-            if 25 < len(t) < 400:
+            if es_valido(t):
                 parrafos.append(t)
+
         for t in parrafos:
             tlow = t.lower()
-            if any(k in tlow for k in ["salary", "wage", "pay", "salaire", "remuneration", "smic", "per week", "per month", "euros", "gbp", "competitive"]):
+            if any(k in tlow for k in ["salary", "wage", "per week", "per month", "euros", "gbp", "competitive pay", "salaire", "remuneration"]) and any(c.isdigit() for c in t):
                 if not detalles["salario"]:
                     detalles["salario"] = t[:180]
-            if any(k in tlow for k in ["required", "must", "experience", "qualification", "requis", "exige", "fluent", "language", "driving licence", "permis"]):
+            if any(k in tlow for k in ["required", "must have", "experience", "qualification", "fluent", "driving licence", "requis", "exige"]):
                 if not detalles["requisitos"]:
                     detalles["requisitos"] = t[:220]
-            if any(k in tlow for k in ["benefit", "include", "package", "ski pass", "forfait", "avantage", "accommodation", "meals", "logement", "nourri", "chalet", "season"]):
+            if any(k in tlow for k in ["ski pass", "forfait", "accommodation included", "meals included", "logement", "nourri", "uniform", "lift pass"]):
                 if not detalles["beneficios"]:
                     detalles["beneficios"] = t[:220]
-            if any(k in tlow for k in ["looking for", "we need", "role", "position", "responsib", "duties", "poste", "missions", "buscamos", "cherchons"]):
+            if any(k in tlow for k in ["looking for", "we are seeking", "role involves", "responsibilities", "you will", "duties", "poste", "missions"]):
                 if not detalles["descripcion"]:
                     detalles["descripcion"] = t[:280]
+
         if not detalles["descripcion"] and parrafos:
             detalles["descripcion"] = parrafos[0][:280]
-        if not detalles["salario"] and parrafos:
-            for t in parrafos:
-                if any(c.isdigit() for c in t) and any(k in t.lower() for k in ["week", "month", "season", "semaine", "mois"]):
-                    detalles["salario"] = t[:180]
-                    break
         if not detalles["salario"]:
-            detalles["salario"] = "Salario competitivo - consultar en la oferta"
+            detalles["salario"] = "Consultar en la oferta"
         if not detalles["requisitos"]:
             detalles["requisitos"] = "Ingles avanzado requerido. Ver requisitos completos en el sitio."
         if not detalles["beneficios"]:
@@ -108,7 +117,7 @@ def obtener_detalles(url):
     except Exception:
         return {
             "descripcion": "Ver descripcion completa en el sitio de la oferta.",
-            "salario": "Salario competitivo - consultar en la oferta",
+            "salario": "Consultar en la oferta",
             "requisitos": "Ingles avanzado requerido. Ver requisitos completos en el sitio.",
             "beneficios": "Alojamiento y comida incluidos. Ver beneficios completos en el sitio."
         }

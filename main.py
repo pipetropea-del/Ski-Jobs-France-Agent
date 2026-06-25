@@ -265,4 +265,4 @@ def main():
     else:
         mensaje = f"Ski Jobs Francia - {fecha}\n{total} ofertas encontradas hoy."
     enviar_whatsapp(mensaje)
-    print("L
+    print("Listo")

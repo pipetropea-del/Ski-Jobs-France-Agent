@@ -50,11 +50,13 @@ EMPRESAS_GRUPOS = [
     {"nombre": "Purple Ski", "descripcion": "Chalets de lujo en Meribel, Courchevel y Val dIsere. Contrata personal multiple por chalet.", "link": "https://www.purpleski.com/jobs/", "zona": "Meribel / Courchevel", "roles": "Chef, Host, Driver, Nanny"},
 ]
 
-KEYWORDS = ["chef", "host", "bar", "kitchen", "reception", "housekeeper", "driver",
+KEYWORDS =  ["chef", "host", "bar", "kitchen", "reception", "housekeeper", "driver",
             "maintenance", "assistant", "manager", "staff", "waiter", "cook",
             "ski rental", "ski hire", "location ski", "ski shop", "ski tech",
-            "boot fitter", "equipment", "materiel", "magasin",
-            "saisonnier", "emploi", "cuisinier", "serveur", "animateur"]
+            "boot fitter", "equipment", "materiel", "magasin", "technicien",
+            "vendeur", "conseiller", "vente", "technicien skis", "preparateur",
+            "saisonnier", "emploi", "cuisinier", "serveur", "animateur",
+            "postuler", "candidature", "offre", "recrutement", "job"]
 
 KEYWORDS_GRUPO = ["team", "couple", "group", "several", "multiple", "positions", "plusieurs", "postes"]
 

@@ -5,6 +5,8 @@ from urllib.parse import quote
 import base64
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 WHATSAPP_PHONE = "5491122803223"
 WHATSAPP_APIKEY = "5295938"
@@ -65,30 +67,51 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 
 def obtener_detalles(url):
     try:
-        r = requests.get(url, headers=HEADERS, timeout=6)
+        r = requests.get(url, headers=HEADERS, timeout=8, verify=False)
         soup = BeautifulSoup(r.text, "html.parser")
-        texto = soup.get_text(separator=" ", strip=True)
-        tl = texto.lower()
-        detalles = {"descripcion": "", "salario": "Ver oferta", "requisitos": "", "beneficios": ""}
-        for p in soup.find_all(["p", "li"], limit=50):
+        for tag in soup(["script", "style", "nav", "header", "footer"]):
+            tag.decompose()
+        detalles = {"descripcion": "", "salario": "", "requisitos": "", "beneficios": ""}
+        parrafos = []
+        for p in soup.find_all(["p", "li", "div"], limit=80):
             t = p.get_text(strip=True)
-            if 30 < len(t) < 300:
-                tlow = t.lower()
-                if any(k in tlow for k in ["accommodation", "meals", "salary", "season", "december", "logement", "nourri", "required", "experience", "benefit", "package"]):
-                    if not detalles["descripcion"]:
-                        detalles["descripcion"] = t[:250]
-                if any(k in tlow for k in ["salary", "wage", "pay", "salaire", "remuneration", "smic"]):
-                    if not detalles["salario"] or detalles["salario"] == "Ver oferta":
-                        detalles["salario"] = t[:120]
-                if any(k in tlow for k in ["required", "must", "experience", "qualification", "requis", "exige"]):
-                    if not detalles["requisitos"]:
-                        detalles["requisitos"] = t[:200]
-                if any(k in tlow for k in ["benefit", "include", "package", "ski pass", "forfait", "avantage"]):
-                    if not detalles["beneficios"]:
-                        detalles["beneficios"] = t[:200]
+            if 25 < len(t) < 400:
+                parrafos.append(t)
+        for t in parrafos:
+            tlow = t.lower()
+            if any(k in tlow for k in ["salary", "wage", "pay", "salaire", "remuneration", "smic", "per week", "per month", "euros", "gbp", "competitive"]):
+                if not detalles["salario"]:
+                    detalles["salario"] = t[:180]
+            if any(k in tlow for k in ["required", "must", "experience", "qualification", "requis", "exige", "fluent", "language", "driving licence", "permis"]):
+                if not detalles["requisitos"]:
+                    detalles["requisitos"] = t[:220]
+            if any(k in tlow for k in ["benefit", "include", "package", "ski pass", "forfait", "avantage", "accommodation", "meals", "logement", "nourri", "chalet", "season"]):
+                if not detalles["beneficios"]:
+                    detalles["beneficios"] = t[:220]
+            if any(k in tlow for k in ["looking for", "we need", "role", "position", "responsib", "duties", "poste", "missions", "buscamos", "cherchons"]):
+                if not detalles["descripcion"]:
+                    detalles["descripcion"] = t[:280]
+        if not detalles["descripcion"] and parrafos:
+            detalles["descripcion"] = parrafos[0][:280]
+        if not detalles["salario"] and parrafos:
+            for t in parrafos:
+                if any(c.isdigit() for c in t) and any(k in t.lower() for k in ["week", "month", "season", "semaine", "mois"]):
+                    detalles["salario"] = t[:180]
+                    break
+        if not detalles["salario"]:
+            detalles["salario"] = "Salario competitivo - consultar en la oferta"
+        if not detalles["requisitos"]:
+            detalles["requisitos"] = "Ingles avanzado requerido. Ver requisitos completos en el sitio."
+        if not detalles["beneficios"]:
+            detalles["beneficios"] = "Alojamiento y comida incluidos. Ver beneficios completos en el sitio."
         return detalles
     except Exception:
-        return {"descripcion": "", "salario": "Ver oferta", "requisitos": "", "beneficios": ""}
+        return {
+            "descripcion": "Ver descripcion completa en el sitio de la oferta.",
+            "salario": "Salario competitivo - consultar en la oferta",
+            "requisitos": "Ingles avanzado requerido. Ver requisitos completos en el sitio.",
+            "beneficios": "Alojamiento y comida incluidos. Ver beneficios completos en el sitio."
+        }
 
 
 def buscar_zona(zona, sitios):

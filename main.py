@@ -39,7 +39,7 @@ ZONAS = {
         {"nombre": "Twinner Jobs", "url": "https://www.twinner.com/fr/recrutement"},
         {"nombre": "Ski France Emploi", "url": "https://fr.indeed.com/emplois?q=ski+rental+france+loge+nourri"},
     ]
-    ]
+    
 }
 
 EMPRESAS_GRUPOS = [

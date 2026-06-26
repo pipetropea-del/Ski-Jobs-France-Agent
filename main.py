@@ -13,6 +13,18 @@ WHATSAPP_APIKEY = "5295938"
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GITHUB_REPO = os.environ.get("GITHUB_REPO")
 
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+
+KEYWORDS = ["chef", "host", "bar", "kitchen", "reception", "housekeeper", "driver",
+            "maintenance", "assistant", "manager", "staff", "waiter", "cook",
+            "ski rental", "ski hire", "location ski", "ski shop", "ski tech",
+            "boot fitter", "equipment", "materiel", "magasin", "technicien",
+            "vendeur", "conseiller", "vente", "preparateur",
+            "saisonnier", "emploi", "cuisinier", "serveur", "animateur",
+            "postuler", "candidature", "offre", "recrutement", "job"]
+
+KEYWORDS_GRUPO = ["team", "couple", "group", "several", "multiple", "positions", "plusieurs", "postes"]
+
 ZONAS = {
     "Chamonix": [
         {"nombre": "CoolSkiJobs", "url": "https://www.coolskijobs.com/ski-resorts/chamonix/"},
@@ -30,7 +42,7 @@ ZONAS = {
         {"nombre": "Hunter Chalets", "url": "https://hunterchalets.com/ski-season-jobs/"},
         {"nombre": "SnowSeason", "url": "https://www.snowseasoncentral.com/france"},
     ],
-        "Otras zonas": [
+    "Otras zonas": [
         {"nombre": "SkiWorld", "url": "https://www.skiworld.co.uk/recruitment/ski-season-jobs"},
         {"nombre": "Natives", "url": "https://natives.co.uk"},
     ],
@@ -41,7 +53,6 @@ ZONAS = {
         {"nombre": "Twinner Jobs", "url": "https://www.twinner.com/fr/recrutement"},
         {"nombre": "Ski France Emploi", "url": "https://fr.indeed.com/emplois?q=ski+rental+france+loge+nourri"},
     ]
-    
 }
 
 EMPRESAS_GRUPOS = [
@@ -98,6 +109,64 @@ EMPRESAS_GRUPOS = [
 ]
 
 
+def obtener_detalles(url):
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=4, verify=False)
+        soup = BeautifulSoup(r.text, "html.parser")
+        for tag in soup(["script", "style", "nav", "header", "footer", "a"]):
+            tag.decompose()
+        detalles = {"descripcion": "", "salario": "", "requisitos": "", "beneficios": ""}
+
+        def es_valido(t):
+            if len(t) < 30 or len(t) > 350:
+                return False
+            if "@" in t or "Contact" in t or "Home" in t or "Apply" in t:
+                return False
+            if t.count(">") > 1 or t.count("|") > 2:
+                return False
+            if len(t.split()) < 5:
+                return False
+            return True
+
+        parrafos = []
+        for p in soup.find_all(["p", "li"], limit=80):
+            t = p.get_text(strip=True)
+            if es_valido(t):
+                parrafos.append(t)
+
+        for t in parrafos:
+            tlow = t.lower()
+            if any(k in tlow for k in ["salary", "wage", "per week", "per month", "euros", "gbp", "competitive pay", "salaire", "remuneration"]) and any(c.isdigit() for c in t):
+                if not detalles["salario"]:
+                    detalles["salario"] = t[:180]
+            if any(k in tlow for k in ["required", "must have", "experience", "qualification", "fluent", "driving licence", "requis", "exige"]):
+                if not detalles["requisitos"]:
+                    detalles["requisitos"] = t[:220]
+            if any(k in tlow for k in ["ski pass", "forfait", "accommodation included", "meals included", "logement", "nourri", "uniform", "lift pass"]):
+                if not detalles["beneficios"]:
+                    detalles["beneficios"] = t[:220]
+            if any(k in tlow for k in ["looking for", "we are seeking", "role involves", "responsibilities", "you will", "duties", "poste", "missions"]):
+                if not detalles["descripcion"]:
+                    detalles["descripcion"] = t[:280]
+
+        if not detalles["descripcion"] and parrafos:
+            detalles["descripcion"] = parrafos[0][:280]
+        if not detalles["salario"]:
+            detalles["salario"] = "Consultar en la oferta"
+        if not detalles["requisitos"]:
+            detalles["requisitos"] = "Ingles avanzado requerido. Ver requisitos completos en el sitio."
+        if not detalles["beneficios"]:
+            detalles["beneficios"] = "Alojamiento y comida incluidos. Ver beneficios completos en el sitio."
+        return detalles
+    except Exception:
+        return {
+            "descripcion": "Ver descripcion completa en el sitio de la oferta.",
+            "salario": "Consultar en la oferta",
+            "requisitos": "Ingles avanzado requerido. Ver requisitos completos en el sitio.",
+            "beneficios": "Alojamiento y comida incluidos. Ver beneficios completos en el sitio."
+        }
+
+
 def buscar_zona(zona, sitios):
     ofertas_raw = []
     for sitio in sitios:
@@ -132,7 +201,7 @@ def buscar_zona(zona, sitios):
         o.update(det)
         return o
 
-    with ThreadPoolExecutor(max_workers=3) as ex:
+    with ThreadPoolExecutor(max_workers=6) as ex:
         futures = [ex.submit(enriquecer, o) for o in ofertas_raw]
         result = [f.result() for f in as_completed(futures)]
 
@@ -143,7 +212,7 @@ def tarjeta(o, idx, destacada=False):
     border = 'border: 2px solid #e8a020;' if destacada else ''
     ski = '<span class="tag tblue">Ski pass</span>' if o.get("ski_pass") else ""
     grp = '<span class="tag torange">3+ personas</span>' if o.get("para_grupo") else ""
-    salario = o.get("salario", "Ver oferta")
+    salario = o.get("salario", "Consultar en la oferta")
     return (
         '<div class="card" style="' + border + '">'
         '<div class="card-top">'
@@ -163,8 +232,9 @@ def tarjeta(o, idx, destacada=False):
 
 
 def tarjeta_grupo_empresa(e):
+    nombre_js = e["nombre"].replace("'", "")
     return (
-        '<div class="card" style="border: 2px solid #e8a020;" onclick="abrirModalGrupo(\'' + e["nombre"].replace("'","") + '\')" style="cursor:pointer">'
+        '<div class="card" style="border: 2px solid #e8a020;cursor:pointer">'
         '<div class="card-top">'
         '<div><h3>' + e["nombre"] + '</h3><div class="centro">' + e["zona"] + '</div></div>'
         '<span class="badge torange-badge">Grupos</span>'
@@ -179,7 +249,7 @@ def tarjeta_grupo_empresa(e):
         '</div>'
         '<div class="card-bottom">'
         '<span class="fecha">Dic 2026 - Mar 2027</span>'
-        '<button class="btn-det" onclick="abrirModalGrupo(\'' + e["nombre"].replace("'","") + '\')">Ver detalles</button>'
+        '<button class="btn-det" onclick="abrirModalGrupo(\'' + nombre_js + '\')">Ver detalles</button>'
         '<a href="' + e["link"] + '" class="btn" target="_blank">Aplicar</a>'
         '</div></div>'
     )
@@ -189,13 +259,26 @@ def generar_html(por_zona, fecha):
     total = sum(len(v) for v in por_zona.values())
     grupos_scraper = [o for v in por_zona.values() for o in v if o["para_grupo"]]
     sitios = sum(len(ZONAS[z]) for z in ZONAS)
-
     todas_ofertas = [o for v in por_zona.values() for o in v]
 
-    datos_js = "const ofertas = [\n"
+    datos_js = "const empresasGrupos = [\n"
+    for e in EMPRESAS_GRUPOS:
+        desc = e.get("descripcion", "").replace("'", "").replace('"', "")
+        sal = e.get("salario", "").replace("'", "").replace('"', "")
+        req = e.get("requisitos", "").replace("'", "").replace('"', "")
+        ben = e.get("beneficios", "").replace("'", "").replace('"', "")
+        datos_js += (
+            '  {nombre:"' + e["nombre"] + '",zona:"' + e["zona"] +
+            '",roles:"' + e["roles"] + '",salario:"' + sal +
+            '",descripcion:"' + desc + '",requisitos:"' + req +
+            '",beneficios:"' + ben + '",link:"' + e["link"] + '"},\n'
+        )
+    datos_js += "];\n"
+
+    datos_js += "const ofertas = [\n"
     for o in todas_ofertas:
         desc = o.get("descripcion", "").replace("'", "").replace('"', "").replace("\n", " ")
-        sal = o.get("salario", "Ver oferta").replace("'", "").replace('"', "").replace("\n", " ")
+        sal = o.get("salario", "Consultar en la oferta").replace("'", "").replace('"', "").replace("\n", " ")
         req = o.get("requisitos", "").replace("'", "").replace('"', "").replace("\n", " ")
         ben = o.get("beneficios", "").replace("'", "").replace('"', "").replace("\n", " ")
         datos_js += (
@@ -324,6 +407,19 @@ function abrirModal(idx) {
   document.getElementById("m-link").href = o.link;
   document.getElementById("overlay").classList.add("active");
 }
+function abrirModalGrupo(nombre) {
+  const e = empresasGrupos.find(x => x.nombre === nombre);
+  if (!e) return;
+  document.getElementById("m-puesto").textContent = e.nombre;
+  document.getElementById("m-zona").textContent = e.zona + " | " + e.roles;
+  document.getElementById("m-desc").textContent = e.descripcion;
+  document.getElementById("m-sal").textContent = e.salario;
+  document.getElementById("m-req").textContent = e.requisitos;
+  document.getElementById("m-ben").textContent = e.beneficios;
+  document.getElementById("m-temp").textContent = "Dic 2026 - Mar 2027";
+  document.getElementById("m-link").href = e.link;
+  document.getElementById("overlay").classList.add("active");
+}
 function cerrarModal(e) {
   if (!e || e.target === document.getElementById("overlay")) {
     document.getElementById("overlay").classList.remove("active");
@@ -365,7 +461,6 @@ def main():
     for zona, sitios in ZONAS.items():
         por_zona[zona] = buscar_zona(zona, sitios)
     total = sum(len(v) for v in por_zona.values())
-    grupos = [o for v in por_zona.values() for o in v if o["para_grupo"]]
     print("Encontradas: " + str(total) + " ofertas")
     html = generar_html(por_zona, fecha)
     link = subir_github(html)

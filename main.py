@@ -231,8 +231,7 @@ def tarjeta(o, idx, destacada=False):
     )
 
 
-def tarjeta_grupo_empresa(e):
-    nombre_js = e["nombre"].replace("'", "")
+def tarjeta_grupo_empresa(e, idx):
     return (
         '<div class="card" style="border: 2px solid #e8a020;cursor:pointer">'
         '<div class="card-top">'
@@ -249,7 +248,7 @@ def tarjeta_grupo_empresa(e):
         '</div>'
         '<div class="card-bottom">'
         '<span class="fecha">Dic 2026 - Mar 2027</span>'
-        '<button class="btn-det" onclick="abrirModalGrupo(\'' + nombre_js + '\')">Ver detalles</button>'
+        '<button class="btn-det" onclick="abrirModalGrupo(' + str(idx) + ')">Ver detalles</button>'
         '<a href="' + e["link"] + '" class="btn" target="_blank">Aplicar</a>'
         '</div></div>'
     )
@@ -289,7 +288,7 @@ def generar_html(por_zona, fecha):
         )
     datos_js += "];\n"
 
-    cards_empresas = "".join(tarjeta_grupo_empresa(e) for e in EMPRESAS_GRUPOS)
+    cards_empresas = "".join(tarjeta_grupo_empresa(e, i) for i, e in enumerate(EMPRESAS_GRUPOS))
     cards_scraper = "".join(tarjeta(o, i, True) for i, o in enumerate(grupos_scraper))
 
     sec_grupos = (
@@ -407,9 +406,8 @@ function abrirModal(idx) {
   document.getElementById("m-link").href = o.link;
   document.getElementById("overlay").classList.add("active");
 }
-function abrirModalGrupo(nombre) {
-  const e = empresasGrupos.find(x => x.nombre === nombre);
-  if (!e) return;
+function abrirModalGrupo(idx) {
+  const e = empresasGrupos[idx];
   document.getElementById("m-puesto").textContent = e.nombre;
   document.getElementById("m-zona").textContent = e.zona + " | " + e.roles;
   document.getElementById("m-desc").textContent = e.descripcion;

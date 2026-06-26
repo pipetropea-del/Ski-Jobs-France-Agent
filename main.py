@@ -45,82 +45,57 @@ ZONAS = {
 }
 
 EMPRESAS_GRUPOS = [
-    {"nombre": "Consensio Chalets", "descripcion": "Contrata equipos completos para Val dIsere, Meribel y Courchevel. Buscan grupos de 2-4 personas para cubrir chalet completo.", "link": "https://www.consensiochalets.co.uk/ski-season-jobs/", "zona": "Val dIsere / Courchevel", "roles": "Chalet Host, Chef, Driver, Housekeeper"},
-    {"nombre": "Le Ski", "descripcion": "Opera chalets en Val dIsere, Courchevel y La Tania. Contrata parejas y grupos para gestionar chalets completos.", "link": "https://www.leski.com/ski-jobs/apply", "zona": "Val dIsere / La Tania", "roles": "Chalet Couple, Host, Chef"},
-    {"nombre": "SkiWorld", "descripcion": "Gran operador con equipos en Alpe dHuez, Courchevel, La Plagne, Les Arcs, Meribel, Tignes, Val dIsere y Val Thorens.", "link": "https://www.skiworld.co.uk/recruitment/ski-season-jobs", "zona": "Multiples resorts", "roles": "Chalet Host, Resort Rep, Driver, Ski Tech"},
-    {"nombre": "Hunter Chalets", "descripcion": "Contrata equipos para Morzine y Les Gets. Ideal para grupos de amigos que quieran trabajar juntos.", "link": "https://hunterchalets.com/ski-season-jobs/", "zona": "Morzine / Les Gets", "roles": "Chalet Host, Chef, Housekeeper"},
-    {"nombre": "Purple Ski", "descripcion": "Chalets de lujo en Meribel, Courchevel y Val dIsere. Contrata personal multiple por chalet.", "link": "https://www.purpleski.com/jobs/", "zona": "Meribel / Courchevel", "roles": "Chef, Host, Driver, Nanny"},
+    {
+        "nombre": "Consensio Chalets",
+        "descripcion": "Operador de chalets de lujo en Val dIsere, Meribel y Courchevel. Contratan equipos completos de 3-5 personas para gestionar un chalet entero durante la temporada. Ambiente profesional, huespedes de alto nivel.",
+        "link": "https://www.consensiochalets.co.uk/ski-season-jobs/",
+        "zona": "Val dIsere / Courchevel / Meribel",
+        "roles": "Chalet Host, Chef, Driver, Housekeeper",
+        "salario": "Desde 350-500 GBP por semana segun rol",
+        "requisitos": "Ingles fluido, experiencia en hosteleria o cocina, permiso de conducir para el rol de driver. Disponibilidad diciembre a abril.",
+        "beneficios": "Alojamiento en chalet incluido, todas las comidas, ski pass de temporada completa, seguro de viaje, vuelos de ida y vuelta incluidos."
+    },
+    {
+        "nombre": "Le Ski",
+        "descripcion": "Uno de los operadores britanicos mas reconocidos en los Alpes franceses. Opera chalets en Val dIsere, Courchevel y La Tania. Contratan parejas y grupos para gestionar chalets completos, ideal para amigos que quieran trabajar juntos.",
+        "link": "https://www.leski.com/ski-jobs/apply",
+        "zona": "Val dIsere / Courchevel / La Tania",
+        "roles": "Chalet Couple, Chalet Host, Chef, Driver",
+        "salario": "Desde 320-480 GBP por semana segun rol y experiencia",
+        "requisitos": "Ingles fluido, buena actitud de servicio, para chef se valora experiencia culinaria. Temporada diciembre a abril.",
+        "beneficios": "Alojamiento completo incluido, comidas, ski pass de temporada, seguro medico, vuelos incluidos al inicio y fin de temporada."
+    },
+    {
+        "nombre": "SkiWorld",
+        "descripcion": "Gran operador con presencia en Alpe dHuez, Courchevel, La Plagne, Les Arcs, Meribel, Tignes, Val dIsere y Val Thorens. Uno de los empleadores mas grandes de la temporada, contratan cientos de personas cada ano.",
+        "link": "https://www.skiworld.co.uk/recruitment/ski-season-jobs",
+        "zona": "Multiples resorts - toda Francia",
+        "roles": "Chalet Host, Resort Rep, Driver, Ski Tech, Bar Staff, Housekeeper",
+        "salario": "Desde 300-450 GBP por semana segun rol",
+        "requisitos": "Ingles fluido, actitud positiva y orientada al cliente. Algunos roles requieren experiencia previa. Permiso de conducir para drivers.",
+        "beneficios": "Alojamiento incluido, comidas, ski pass de temporada completa, seguro, formacion pagada, descuentos en equipamiento."
+    },
+    {
+        "nombre": "Hunter Chalets",
+        "descripcion": "Operador familiar con chalets en Morzine y Les Gets. Ambiente mas relajado e informal que los grandes operadores. Ideal para grupos de amigos que quieran trabajar juntos en un entorno menos corporativo.",
+        "link": "https://hunterchalets.com/ski-season-jobs/",
+        "zona": "Morzine / Les Gets",
+        "roles": "Chalet Host, Chef, Housekeeper, Driver",
+        "salario": "Desde 300-420 GBP por semana segun rol",
+        "requisitos": "Ingles fluido, buena actitud, ganas de trabajar en equipo. No se requiere experiencia formal para todos los roles.",
+        "beneficios": "Alojamiento en chalet incluido, todas las comidas, ski pass de temporada, ambiente familiar y equipo pequeno."
+    },
+    {
+        "nombre": "Purple Ski",
+        "descripcion": "Chalets de lujo en Meribel, Courchevel y Val dIsere. Clientela de muy alto nivel, ambiente exigente pero con excelentes condiciones. Contratan equipos de 3-5 personas por chalet incluyendo chef, host y driver.",
+        "link": "https://www.purpleski.com/jobs/",
+        "zona": "Meribel / Courchevel / Val dIsere",
+        "roles": "Chef, Chalet Host, Driver, Nanny, Housekeeper",
+        "salario": "Desde 400-600 GBP por semana, uno de los salarios mas altos del sector",
+        "requisitos": "Ingles fluido imprescindible, experiencia previa en hosteleria o cocina de alto nivel para roles de chef. Presentacion impecable.",
+        "beneficios": "Alojamiento de lujo incluido, todas las comidas, ski pass de temporada completa, seguro medico, propinas generosas de clientes de alto nivel."
+    },
 ]
-
-KEYWORDS =  ["chef", "host", "bar", "kitchen", "reception", "housekeeper", "driver",
-            "maintenance", "assistant", "manager", "staff", "waiter", "cook",
-            "ski rental", "ski hire", "location ski", "ski shop", "ski tech",
-            "boot fitter", "equipment", "materiel", "magasin", "technicien",
-            "vendeur", "conseiller", "vente", "technicien skis", "preparateur",
-            "saisonnier", "emploi", "cuisinier", "serveur", "animateur",
-            "postuler", "candidature", "offre", "recrutement", "job"]
-
-KEYWORDS_GRUPO = ["team", "couple", "group", "several", "multiple", "positions", "plusieurs", "postes"]
-
-HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-
-def obtener_detalles(url):
-    try:
-        r = requests.get(url, headers=HEADERS, timeout=4, verify=False)
-        soup = BeautifulSoup(r.text, "html.parser")
-        for tag in soup(["script", "style", "nav", "header", "footer", "a"]):
-            tag.decompose()
-        detalles = {"descripcion": "", "salario": "", "requisitos": "", "beneficios": ""}
-
-        def es_valido(t):
-            if len(t) < 30 or len(t) > 350:
-                return False
-            if "@" in t or "Contact" in t or "Home" in t or "Apply" in t:
-                return False
-            if t.count(">") > 1 or t.count("|") > 2:
-                return False
-            palabras = t.split()
-            if len(palabras) < 5:
-                return False
-            return True
-
-        parrafos = []
-        for p in soup.find_all(["p", "li"], limit=80):
-            t = p.get_text(strip=True)
-            if es_valido(t):
-                parrafos.append(t)
-
-        for t in parrafos:
-            tlow = t.lower()
-            if any(k in tlow for k in ["salary", "wage", "per week", "per month", "euros", "gbp", "competitive pay", "salaire", "remuneration"]) and any(c.isdigit() for c in t):
-                if not detalles["salario"]:
-                    detalles["salario"] = t[:180]
-            if any(k in tlow for k in ["required", "must have", "experience", "qualification", "fluent", "driving licence", "requis", "exige"]):
-                if not detalles["requisitos"]:
-                    detalles["requisitos"] = t[:220]
-            if any(k in tlow for k in ["ski pass", "forfait", "accommodation included", "meals included", "logement", "nourri", "uniform", "lift pass"]):
-                if not detalles["beneficios"]:
-                    detalles["beneficios"] = t[:220]
-            if any(k in tlow for k in ["looking for", "we are seeking", "role involves", "responsibilities", "you will", "duties", "poste", "missions"]):
-                if not detalles["descripcion"]:
-                    detalles["descripcion"] = t[:280]
-
-        if not detalles["descripcion"] and parrafos:
-            detalles["descripcion"] = parrafos[0][:280]
-        if not detalles["salario"]:
-            detalles["salario"] = "Consultar en la oferta"
-        if not detalles["requisitos"]:
-            detalles["requisitos"] = "Ingles avanzado requerido. Ver requisitos completos en el sitio."
-        if not detalles["beneficios"]:
-            detalles["beneficios"] = "Alojamiento y comida incluidos. Ver beneficios completos en el sitio."
-        return detalles
-    except Exception:
-        return {
-            "descripcion": "Ver descripcion completa en el sitio de la oferta.",
-            "salario": "Consultar en la oferta",
-            "requisitos": "Ingles avanzado requerido. Ver requisitos completos en el sitio.",
-            "beneficios": "Alojamiento y comida incluidos. Ver beneficios completos en el sitio."
-        }
 
 
 def buscar_zona(zona, sitios):
@@ -189,21 +164,23 @@ def tarjeta(o, idx, destacada=False):
 
 def tarjeta_grupo_empresa(e):
     return (
-        '<div class="card" style="border: 2px solid #e8a020;">'
+        '<div class="card" style="border: 2px solid #e8a020;" onclick="abrirModalGrupo(\'' + e["nombre"].replace("'","") + '\')" style="cursor:pointer">'
         '<div class="card-top">'
         '<div><h3>' + e["nombre"] + '</h3><div class="centro">' + e["zona"] + '</div></div>'
         '<span class="badge torange-badge">Grupos</span>'
         '</div>'
-        '<div class="descripcion">' + e["descripcion"] + '</div>'
+        '<div class="descripcion">' + e["descripcion"][:120] + '...</div>'
         '<div class="roles"><strong>Roles:</strong> ' + e["roles"] + '</div>'
         '<div class="tags">'
         '<span class="tag tgreen">Alojamiento</span>'
         '<span class="tag tgreen">Comida</span>'
+        '<span class="tag tblue">Ski Pass</span>'
         '<span class="tag torange">3+ personas</span>'
         '</div>'
         '<div class="card-bottom">'
         '<span class="fecha">Dic 2026 - Mar 2027</span>'
-        '<a href="' + e["link"] + '" class="btn" target="_blank">Ver empleos</a>'
+        '<button class="btn-det" onclick="abrirModalGrupo(\'' + e["nombre"].replace("'","") + '\')">Ver detalles</button>'
+        '<a href="' + e["link"] + '" class="btn" target="_blank">Aplicar</a>'
         '</div></div>'
     )
 
